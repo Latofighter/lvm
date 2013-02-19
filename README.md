@@ -10,3 +10,7 @@ Las Venturas Maximum v3.01f/Russian Server Original
 Рабочая версия скрипта доступна по адресу samp://gta.bews.tk:7778
 
 ЗАПРЕЩАЕТСЯ СОЗДАВАТЬ СЕРВЕРА-КЛОНЫ!
+
+
+Легенда: master branch - рабочая версия, dev1 branch - разработка.
+Plull Request адресовать master branch. 
