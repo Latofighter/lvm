@@ -13,4 +13,4 @@ Las Venturas Maximum v3.01f/Russian Server Original
 
 
 Легенда: master branch - рабочая версия, dev1 branch - разработка.
-Plull Request адресовать master branch. 
+Plull Request адресовать dev1 branch. 
