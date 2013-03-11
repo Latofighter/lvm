@@ -1,6 +1,6 @@
 #define Version "3.01f"
-#define Revision "14"
-#define Date "20.02.13"
+#define Revision "15"
+#define Date "11.03.13"
 #include <a_samp>
 #include <Dini>
 #include <dutils>
@@ -12842,11 +12842,12 @@ SetPlayerMarkerForPlayer(playerid,i,Coloren); }
 		return 1; }
 
 
-	if(strcmp(tmp,"/reconnect",true)==0) {
-		if(Alevel[playerid]>0) {
-			IRC_Quit(EchoConnection1, "Reconnect");
-			IRC_Quit(EchoConnection2, "Reconnect");
+	if(strcmp(tmp,"/reconnect",true)==0)
+	{
+		if(Alevel[playerid]>0)
+		{
 			SendClientMessage(playerid, yellow, " The inquiry was sent.");
+			IRC_ReconnectF();
 		}else Errorm(playerid);
 		return 1;
 	}
@@ -16057,8 +16058,8 @@ public GameModeExitFunc()
 	TextDrawHideForAll(WEB);
 	for(new a = 0; a <= MAX_PLAYERS; a++) if(IsPlayerConnected(a)) {
 		TextDrawHideForPlayer(a, BankDraw[a]); TextDrawHideForPlayer(a, GangDraw[a]); }
-	IRC_Quit(EchoConnection1, "Server Closed");
-	IRC_Quit(EchoConnection2, "Server Closed");
+	IRC_Quit(EchoConnection1, "Restarting Server");
+	IRC_Quit(EchoConnection2, "Restarting Server");
 	SendRconCommand("gmx");
 	//GameModeExit();
 }
@@ -16071,8 +16072,8 @@ public GameModeExitFuncFULL()
 	TextDrawHideForAll(WEB);
 	for(new a = 0; a <= MAX_PLAYERS; a++) if(IsPlayerConnected(a)) {
 		TextDrawHideForPlayer(a, BankDraw[a]); TextDrawHideForPlayer(a, GangDraw[a]); }
-	IRC_Quit(EchoConnection1, "Server Closed");
-	IRC_Quit(EchoConnection2, "Server Closed");
+	IRC_Quit(EchoConnection1, "Restarting Server");
+	IRC_Quit(EchoConnection2, "Restarting Server");
 	SendRconCommand("exit");
 	//GameModeExit();
 }
@@ -19100,11 +19101,12 @@ public OnPlayerEnterRaceCheckpoint(playerid) {
 public OnRconCommand(cmd[]) {
 	new string[256];
 
-	if(strcmp(cmd, "reconnect", true)==0) {
-		IRC_Quit(EchoConnection1, "Reconnect");
-		IRC_Quit(EchoConnection2, "Reconnect");
+	if(strcmp(cmd, "reconnect", true)==0)
+	{
 		print("The inquiry was sent.");
-		return 1; }
+		IRC_ReconnectF();
+		return 1;
+	}
 
 	if(strcmp(cmd, "fullrestart", true)==0) {
 		for(new i = 0; i < MAX_PLAYERS; i++)
@@ -19990,8 +19992,8 @@ public ChangeModeCON(){
 	TextDrawHideForAll(WEB);
 	for(new a = 0; a <= MAX_PLAYERS; a++) {
 		TextDrawHideForPlayer(a, BankDraw[a]); TextDrawHideForPlayer(a, GangDraw[a]); }
-	IRC_Quit(EchoConnection1, "Server Closed");
-	IRC_Quit(EchoConnection2, "Server Closed");
+	IRC_Quit(EchoConnection1, "Restarting Server");
+	IRC_Quit(EchoConnection2, "Restarting Server");
 
 	SendRconCommand("changemode 4MADNESSrus");
 	return 1; }
@@ -24293,14 +24295,6 @@ return 1; }
 public IRC_OnUserSay(botid, recipient[], user[], host[], message[]) {
 	CrashTest("[function] IRC_OnUserSay");
 
-	if (message[0] == COMMAND_PREFIX) {
-		new tmp[256],idx;
-		tmp = strtok(message, idx);
-		if(strcmp(tmp, "!join", true) == 0){
-			IRC_JoinChannel(EchoConnection2, EchoADMChan);
-			return 1; }
-	}
-
 	if(botid==EchoConnection1) return 1;
 	if(!message[0]) return 1;
 
@@ -24381,6 +24375,14 @@ public IRC_UserCommand(conn, recipient[], user[], host[], message[]) {
 
 	tmp = strtok(message, idx);
 
+
+	if(strcmp(tmp, "!join", true) == 0)
+	{
+		IRC_JoinChannel(EchoConnection2, EchoADMChan);
+		return 1;
+	}
+
+	
 	if(strcmp(tmp,"!start",true)==0) {
 		if(CityAdding!=0) return 1;
 		if(ircIsUser(EchoConnection2,user2)) return 1;
@@ -26389,10 +26391,10 @@ return 1; }
 		return 1; }
 
 
-	if(strcmp(tmp,"!reconnect",true)==0) {
+	if(strcmp(tmp,"!reconnect",true)==0)
+	{
 		if(!ircIsSop(conn,user2)) return 1;
-		IRC_Quit(EchoConnection1, "Reconnect");
-		IRC_Quit(EchoConnection2, "Reconnect");
+		IRC_ReconnectF();
 		return 1;
 	}
 
@@ -27599,6 +27601,8 @@ public IRC_ReconnectF()
 	IRC_Quit(EchoConnection2, "Reconnect");
 	EchoConnection1 = IRC_Connect("irc.bews.tk", 6667, EchoBot1, "Original Russian Server Bot", "original");
 	EchoConnection2 = IRC_Connect("irc.bews.tk", 6667, EchoBot2, "Original Russian Server Bot", "original");
+	IRC_SetIntData(EchoConnection1, E_IRC_RECEIVE_TIMEOUT, 360000);
+	IRC_SetIntData(EchoConnection2, E_IRC_RECEIVE_TIMEOUT, 360000);
 	IRCconnetion=1;
 	return 1; 
 }
